@@ -1,0 +1,16 @@
+# Dependency directories
+node_modules/
+
+# Dist folder
+dist/
+
+# Directory Tree Json Files
+
+# Sql Files
+*.sql
+
+# Environment file
+.env
+
+scratchpad.js
+TODO.md

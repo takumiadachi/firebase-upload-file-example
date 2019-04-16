@@ -1,0 +1,9 @@
+{
+  "presets": ["@babel/preset-env", "@babel/preset-react"],
+  "plugins": [
+    ["@babel/plugin-proposal-decorators", { "legacy": true }], // Old way that still works
+    ["@babel/plugin-proposal-class-properties", { "loose": true }]
+    /* https://stackoverflow.com/questions/52637728/adding-computed-decorator-causes-a-typeerror*/
+    // ["@babel/plugin-proposal-decorators", { "decoratorsBeforeExport": true }][ // Not working yet
+  ]
+}
