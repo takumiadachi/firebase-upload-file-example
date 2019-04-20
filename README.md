@@ -6,8 +6,14 @@ Change firebase environment variables in .env, then...
 npm install
 ```
 
-## Run/Develop
+## Develop
 
 ```
 npm run dev
+```
+
+## Deploy
+
+```
+npm run build
 ```
