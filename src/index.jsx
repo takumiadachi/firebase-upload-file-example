@@ -138,15 +138,15 @@ class App extends React.Component {
             this.setState({
               status: "Paused"
             });
-            console.log("Upload is paused");
+            console.log("Upload is paused.");
             break;
           case firebase.storage.TaskState.RUNNING: // or 'running'
             this.setState({
               status: "Running"
             });
-            console.log("Upload is running");
+            console.log("Upload is running.");
             break;
-          case firebase.storage.TaskState.Success: // or 'running'
+          case firebase.storage.TaskState.SUCCESS: // or 'running'
             this.setState({
               status: "Upload Success!"
             });
@@ -154,15 +154,15 @@ class App extends React.Component {
             break;
           case firebase.storage.TaskState.CANCELED: // or 'running'
             this.setState({
-              status: "Upload cancelled!"
+              status: "Upload cancelled."
             });
-            console.log("Upload is cancelled");
+            console.log("Upload is cancelled.");
             break;
           case firebase.storage.TaskState.ERROR: // or 'running'
             this.setState({
-              status: "Upload Error"
+              status: "Upload Error."
             });
-            console.log("Upload error");
+            console.log("Upload error.");
             break;
         }
       },
@@ -184,9 +184,16 @@ class App extends React.Component {
       },
       () => {
         // Upload completed successfully, now we can get the download URL
-        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-          console.log("File available at", downloadURL);
-        });
+        uploadTask.snapshot.ref.getDownloadURL().then(
+          function(downloadURL) {
+            console.log(this);
+            console.log("File available at", downloadURL);
+            this.setState({
+              status: "Upload Success!"
+            });
+            console.log("Upload Success!");
+          }.bind(this)
+        );
       }
     );
   };
@@ -200,7 +207,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <form onSubmit={this.onFileSubmit}>
+        <form onSubmit={this.onFileSubmit.bind(this)}>
           <div>Upload File Here</div>
           <div>
             <input
