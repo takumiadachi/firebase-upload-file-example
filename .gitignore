@@ -12,7 +12,6 @@ dist/
 # Environment file
 .env
 .env.dev
-.env.prod
 
 scratchpad.js
 TODO.md
