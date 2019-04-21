@@ -58,6 +58,7 @@ class App extends React.Component {
       uploaded: false,
       fileInput: "",
       progress: 0,
+      bytesTransferred: 0,
       size: 0,
       status: "Ready", //paused or running
       errorCode: null
@@ -96,6 +97,9 @@ class App extends React.Component {
         this.fileType = { contentType: files[0].type };
         console.log(this.file);
         console.log(this.fileName, this.fileSize, this.fileType);
+        this.setState({
+          size: files[0].size
+        });
       } else {
         throw error;
       }
@@ -133,34 +137,40 @@ class App extends React.Component {
           progress: progress
         });
         console.log(firebase.storage.TaskState);
+        console.log(snapshot);
         switch (snapshot.state) {
           case firebase.storage.TaskState.PAUSED: // or 'paused'
             this.setState({
-              status: "Paused"
+              status: "Paused",
+              bytesTransferred: snapshot.bytesTransferred
             });
             console.log("Upload is paused.");
             break;
           case firebase.storage.TaskState.RUNNING: // or 'running'
             this.setState({
-              status: "Running"
+              status: "Running",
+              bytesTransferred: snapshot.bytesTransferred
             });
             console.log("Upload is running.");
             break;
           case firebase.storage.TaskState.SUCCESS: // or 'running'
             this.setState({
-              status: "Upload Success!"
+              status: "Upload Success!",
+              bytesTransferred: snapshot.bytesTransferred
             });
             console.log("Upload Success!");
             break;
           case firebase.storage.TaskState.CANCELED: // or 'running'
             this.setState({
-              status: "Upload cancelled."
+              status: "Upload cancelled.",
+              bytesTransferred: snapshot.bytesTransferred
             });
             console.log("Upload is cancelled.");
             break;
           case firebase.storage.TaskState.ERROR: // or 'running'
             this.setState({
-              status: "Upload Error."
+              status: "Upload Error.",
+              bytesTransferred: snapshot.bytesTransferred
             });
             console.log("Upload error.");
             break;
@@ -208,7 +218,7 @@ class App extends React.Component {
     return (
       <div>
         <form onSubmit={this.onFileSubmit.bind(this)}>
-          <div>Upload File Here</div>
+          <h3>Upload File Here</h3>
           <div>
             <input
               type="file"
@@ -227,7 +237,12 @@ class App extends React.Component {
           </div>
           <progress value={this.state.progress} max="100" />
           <div>{this.state.status}</div>
-          <div>{this.state.size}</div>
+          <div>
+            {this.state.bytesTransferred > 0
+              ? `${this.state.bytesTransferred} uploaded`
+              : null}
+          </div>
+          <div>{this.state.size > 0 ? `${this.state.size} bytes` : null}</div>
           <div>{this.state.errorCode}</div>
         </form>
       </div>
