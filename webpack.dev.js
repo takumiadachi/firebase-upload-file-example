@@ -71,7 +71,9 @@ module.exports = {
       lang: "en"
     }),
     // new BundleAnalyzerPlugin(),
-    new Dotenv(),
+    new Dotenv({
+      path: `./.env.dev`
+    }),
     new CleanWebpackPlugin(),
     new WebpackPwaManifest({
       name: `My PWA`,

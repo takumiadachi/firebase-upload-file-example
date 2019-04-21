@@ -5,6 +5,7 @@ const WebpackPwaManifest = require("webpack-pwa-manifest");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
   .BundleAnalyzerPlugin;
 const CleanWebpackPlugin = require("clean-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
 module.exports = {
   mode: "production",
@@ -66,6 +67,9 @@ module.exports = {
     new HtmlWebPackPlugin({
       template: "./src/index.html",
       title: "AniList"
+    }),
+    new Dotenv({
+      path: `./.env.prod`
     }),
     new CleanWebpackPlugin(),
     new WebpackPwaManifest({
