@@ -17,3 +17,9 @@ npm run dev
 ```
 npm run build
 ```
+
+## Example
+
+```
+https://goofy-feynman-21a89d.netlify.com/
+```

@@ -112,9 +112,11 @@ class App extends React.Component {
     this.fileInputRef.current.value = ""; // Clears <input type="file" />
     this.setState({
       uploaded: false,
+      fileInput: "",
       progress: 0,
+      bytesTransferred: 0,
       size: 0,
-      status: "Ready", //Paused or Running
+      status: "Ready", //paused or running
       errorCode: null
     });
   }
