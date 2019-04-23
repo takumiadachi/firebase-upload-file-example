@@ -61,6 +61,7 @@ class App extends React.Component {
       bytesTransferred: 0,
       size: 0,
       status: "Ready", //paused or running
+      downloadURL: "",
       errorCode: null
     };
 
@@ -117,6 +118,7 @@ class App extends React.Component {
       bytesTransferred: 0,
       size: 0,
       status: "Ready", //paused or running
+      downloadURL: "",
       errorCode: null
     });
   }
@@ -201,6 +203,9 @@ class App extends React.Component {
             console.log(this);
             console.log("File available at", downloadURL);
             this.setState({
+              downloadURL: downloadURL
+            });
+            this.setState({
               status: "Upload Success!"
             });
             console.log("Upload Success!");
@@ -213,7 +218,10 @@ class App extends React.Component {
   componentDidMount() {
     console.log("Component mounted!");
     this.storageRef = firebase.storage().ref();
+    console.log(firebase.storage());
+    console.log(firebase.storage().storage);
     this.imagesRef = this.storageRef.child("images"); //points to images
+    console.log(this.imagesRef);
   }
 
   render() {
@@ -246,6 +254,9 @@ class App extends React.Component {
           </div>
           <div>{this.state.size > 0 ? `${this.state.size} bytes` : null}</div>
           <div>{this.state.errorCode}</div>
+          <div>
+            {this.state.downloadURL !== "" ? `${this.state.downloadURL}` : null}
+          </div>
         </form>
       </div>
     );
