@@ -66,6 +66,7 @@ class App extends React.Component {
     };
 
     this.storageRef;
+    this.database;
     this.imagesRef;
     this.fileInputRef = React.createRef(); // Ref to <input type="file" />
     this.file;
@@ -75,12 +76,6 @@ class App extends React.Component {
     this.fileMetaData;
     this.lastModifiedDate;
     this.reader = new FileReader();
-  }
-
-  setUploaded(bool) {
-    this.setState({
-      uploaded: bool
-    });
   }
 
   onFileChange = event => {
@@ -127,6 +122,7 @@ class App extends React.Component {
     // Stops page from refreshing.
     event.preventDefault();
 
+    // Upload Task.
     let uploadTask = this.storageRef
       .child(`images/${this.fileName}`)
       .put(this.file, this.fileType);
@@ -140,8 +136,7 @@ class App extends React.Component {
         this.setState({
           progress: progress
         });
-        console.log(firebase.storage.TaskState);
-        console.log(snapshot);
+        // Firebase States.
         switch (snapshot.state) {
           case firebase.storage.TaskState.PAUSED: // or 'paused'
             this.setState({
@@ -216,12 +211,22 @@ class App extends React.Component {
   };
 
   componentDidMount() {
-    console.log("Component mounted!");
+    console.log("App Component Mounted!");
+    //Initialize firebase stuff after component is mounted.
     this.storageRef = firebase.storage().ref();
-    console.log(firebase.storage());
-    console.log(firebase.storage().storage);
+    this.database = firebase.firestore();
     this.imagesRef = this.storageRef.child("images"); //points to images
-    console.log(this.imagesRef);
+    this.database.collection("users").add({
+      first: "Ada",
+      last: "Lovelace",
+      born: 1815
+  })
+  .then(function(docRef) {
+      console.log("Document written with ID: ", docRef.id);
+  })
+  .catch(function(error) {
+      console.error("Error adding document: ", error);
+  });
   }
 
   render() {

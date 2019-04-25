@@ -1,5 +1,6 @@
 import * as firebase from "firebase/app";
 import "firebase/storage";
+import "firebase/firestore";
 import "firebase/auth";
 // Must use google-cloud package instead of firebase for storage
 // See https://stackoverflow.com/questions/41352150/typeerror-firebase-storage-is-not-a-function
