@@ -50,6 +50,8 @@ OfflinePluginRuntime.install({
   }
 });
 
+const MAX_FILESIZE = Number(process.env.MAX_FILESIZE);
+console.log(MAX_FILESIZE);
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -80,9 +82,15 @@ class App extends React.Component {
 
   onFileChange = event => {
     let files = event.target.files;
+    console.log(files[0]);
+    // Check if file is not greater than max filesize.
+    if (files[0].size >= MAX_FILESIZE) {
+      alert(`[${files[0].name}] too big! Max: ${MAX_FILESIZE}`);
+      this.fileInputRef.current.value = "";
+      return;
+    }
     this.reader.onload = r => {
       this.fileData = r.target.result;
-      console.log(typeof this.fileData);
     };
     try {
       if (files[0]) {
@@ -91,8 +99,6 @@ class App extends React.Component {
         this.fileName = files[0].name;
         this.fileSize = files[0].size;
         this.fileType = { contentType: files[0].type };
-        console.log(this.file);
-        console.log(this.fileName, this.fileSize, this.fileType);
         this.setState({
           size: files[0].size
         });
@@ -182,7 +188,6 @@ class App extends React.Component {
           case "storage/unauthorized":
             // User doesn't have permission to access the object
             break;
-
           case "storage/canceled":
             // User canceled the upload
             break;
@@ -215,18 +220,20 @@ class App extends React.Component {
     //Initialize firebase stuff after component is mounted.
     this.storageRef = firebase.storage().ref();
     this.database = firebase.firestore();
-    this.imagesRef = this.storageRef.child("images"); //points to images
-    this.database.collection("users").add({
-      first: "Ada",
-      last: "Lovelace",
-      born: 1815
-  })
-  .then(function(docRef) {
-      console.log("Document written with ID: ", docRef.id);
-  })
-  .catch(function(error) {
-      console.error("Error adding document: ", error);
-  });
+    this.imagesRef = this.storageRef.child("images"); //points to /images on firebase
+    // this.database
+    //   .collection("users")
+    //   .add({
+    //     first: "Ada",
+    //     last: "Lovelace",
+    //     born: 1815
+    //   })
+    //   .then(function(docRef) {
+    //     console.log("Document written with ID: ", docRef.id);
+    //   })
+    //   .catch(function(error) {
+    //     console.error("Error adding document: ", error);
+    //   });
   }
 
   render() {
