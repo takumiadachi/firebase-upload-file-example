@@ -108,7 +108,9 @@ class App extends React.Component {
           this.fileMime = mimeSignature.mime;
           this.ext = mimeSignature.ext;
           // Check if file is the correct mimeType
-          if (this.fileMime !== "image/jpeg" || this.fileMime !== "image/png") {
+          if (
+            !(this.fileMime === "image/jpeg" || this.fileMime === "image/png")
+          ) {
             alert(`File must be jpeg or png.`);
             this.fileInputRef.current.value = "";
             return;
