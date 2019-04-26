@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import * as OfflinePluginRuntime from "offline-plugin/runtime";
 import "./css/index.scss";
 import firebase from "./fb";
+import fileType from "file-type";
 
 window.addEventListener("load", () => {
   console.log("Event: Load");
@@ -75,7 +76,8 @@ class App extends React.Component {
     this.fileData;
     this.fileName;
     this.fileSize;
-    this.fileMetaData;
+    this.fileMime;
+    this.ext;
     this.lastModifiedDate;
     this.reader = new FileReader();
   }
@@ -89,12 +91,10 @@ class App extends React.Component {
       this.fileInputRef.current.value = "";
       return;
     }
-    this.reader.onload = r => {
-      this.fileData = r.target.result;
-    };
     try {
       if (files[0]) {
-        this.reader.readAsDataURL(files[0]);
+        // this.reader.readAsDataURL(files[0]);
+        this.reader.readAsArrayBuffer(files[0]);
         this.file = files[0];
         this.fileName = files[0].name;
         this.fileSize = files[0].size;
@@ -102,6 +102,18 @@ class App extends React.Component {
         this.setState({
           size: files[0].size
         });
+        this.reader.onloadend = e => {
+          this.fileData = e.target.result;
+          let mimeSignature = fileType(new Uint8Array(e.target.result));
+          this.fileMime = mimeSignature.mime;
+          this.ext = mimeSignature.ext;
+          // Check if file is the correct mimeType
+          if (this.fileMime !== "image/jpeg" || this.fileMime !== "image/png") {
+            alert(`File must be jpeg or png.`);
+            this.fileInputRef.current.value = "";
+            return;
+          }
+        };
       } else {
         throw error;
       }
