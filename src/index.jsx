@@ -4,6 +4,7 @@ import * as OfflinePluginRuntime from "offline-plugin/runtime";
 import "./css/index.scss";
 import firebase from "./fb";
 import fileType from "file-type";
+import filesize from "filesize";
 
 window.addEventListener("load", () => {
   console.log("Event: Load");
@@ -74,17 +75,17 @@ class App extends React.Component {
     this.fileInputRef = React.createRef(); // Ref to <input type="file" />
     this.file;
     this.fileData;
-    this.fileName;
-    this.fileSize;
-    this.fileMime;
-    this.ext;
+    this.fileName = "";
+    this.fileSize = 0;
+    this.fileMime = "";
+    this.ext = "";
     this.lastModifiedDate;
     this.reader = new FileReader();
   }
 
   onFileChange = event => {
     let files = event.target.files;
-    console.log(files[0]);
+
     // Check if file is not greater than max filesize.
     if (files[0].size >= MAX_FILESIZE) {
       alert(`[${files[0].name}] too big! Max: ${MAX_FILESIZE}`);
@@ -102,7 +103,8 @@ class App extends React.Component {
         this.setState({
           size: files[0].size
         });
-        this.reader.onloadend = e => {
+        this.reader.onload = e => {
+          console.log(e);
           this.fileData = e.target.result;
           let mimeSignature = fileType(new Uint8Array(e.target.result));
           this.fileMime = mimeSignature.mime;
@@ -265,20 +267,28 @@ class App extends React.Component {
           </div>
           <div>
             <input type="submit" value="Submit" />
+            <span style={{ fontSize: "12px" }}>{`<${filesize(
+              MAX_FILESIZE
+            )}`}</span>
           </div>
           <div>
             <button type="button" onClick={this.clear.bind(this)}>
               Clear
             </button>
           </div>
-          <progress value={this.state.progress} max="100" />
+          <div>
+            <progress value={this.state.progress} max="100" />
+            <span style={{ fontSize: "12px" }}>{`${
+              this.state.progress
+            }%`}</span>
+          </div>
           <div>{this.state.status}</div>
           <div>
             {this.state.bytesTransferred > 0
-              ? `${this.state.bytesTransferred} uploaded`
-              : null}
+              ? `${this.state.bytesTransferred} /`
+              : null}{" "}
+            {this.state.size > 0 ? `${this.state.size} bytes` : null}
           </div>
-          <div>{this.state.size > 0 ? `${this.state.size} bytes` : null}</div>
           <div>{this.state.errorCode}</div>
           <div>
             {this.state.downloadURL !== "" ? `${this.state.downloadURL}` : null}
