@@ -53,7 +53,7 @@ OfflinePluginRuntime.install({
 });
 
 const MAX_FILESIZE = Number(process.env.MAX_FILESIZE);
-console.log(MAX_FILESIZE);
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -66,7 +66,7 @@ class App extends React.Component {
       size: 0,
       status: "Ready", //paused or running
       downloadURL: "",
-      errorCode: null
+      errorCode: ""
     };
 
     this.storageRef;
@@ -88,7 +88,7 @@ class App extends React.Component {
 
     // Check if file is not greater than max filesize.
     if (files[0].size >= MAX_FILESIZE) {
-      alert(`[${files[0].name}] too big! Max: ${MAX_FILESIZE}`);
+      alert(`[${files[0].name}] too big! Max: ${filesize(MAX_FILESIZE)}`);
       this.fileInputRef.current.value = "";
       return;
     }
@@ -144,6 +144,10 @@ class App extends React.Component {
     // Stops page from refreshing.
     event.preventDefault();
 
+    /**
+     * This code is taken liberally from the official docs:
+     * https://firebase.google.com/docs/storage/web/upload-files
+     */
     // Upload Task.
     let uploadTask = this.storageRef
       .child(`images/${this.fileName}`)
@@ -225,6 +229,21 @@ class App extends React.Component {
               status: "Upload Success!"
             });
             console.log("Upload Success!");
+            // Add to database to display uploaded files to see.
+            this.database
+              .collection("uploadRefs")
+              .add({
+                fileName: this.fileName,
+                url: downloadURL,
+                type: this.fileType,
+                size: this.fileSize
+              })
+              .then(docRef => {
+                console.log("Document written with ID: ", docRef.id);
+              })
+              .catch(error => {
+                console.error("Error adding document: ", error);
+              });
           }.bind(this)
         );
       }
@@ -237,19 +256,6 @@ class App extends React.Component {
     this.storageRef = firebase.storage().ref();
     this.database = firebase.firestore();
     this.imagesRef = this.storageRef.child("images"); //points to /images on firebase
-    // this.database
-    //   .collection("users")
-    //   .add({
-    //     first: "Ada",
-    //     last: "Lovelace",
-    //     born: 1815
-    //   })
-    //   .then(function(docRef) {
-    //     console.log("Document written with ID: ", docRef.id);
-    //   })
-    //   .catch(function(error) {
-    //     console.error("Error adding document: ", error);
-    //   });
   }
 
   render() {
@@ -282,14 +288,18 @@ class App extends React.Component {
               this.state.progress
             }%`}</span>
           </div>
-          <div>{this.state.status}</div>
+          <div>
+            <span style={{ fontSize: "15px" }}>{this.state.status}</span>
+          </div>
           <div>
             {this.state.bytesTransferred > 0
               ? `${this.state.bytesTransferred} /`
               : null}{" "}
             {this.state.size > 0 ? `${this.state.size} bytes` : null}
           </div>
-          <div>{this.state.errorCode}</div>
+          <div>
+            <span style={{ fontSize: "12px" }}>{this.state.errorCode}</span>
+          </div>
           <div>
             {this.state.downloadURL !== "" ? `${this.state.downloadURL}` : null}
           </div>
