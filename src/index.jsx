@@ -6,14 +6,17 @@ import firebase from "./fb";
 import fileType from "file-type";
 import filesize from "filesize";
 
+const ONLINE = `<div style="color:green">PWA Online!</div>`;
+const OFFLINE = `<div style="color:yellow">PWA Offline</div>`;
+
 window.addEventListener("load", () => {
   console.log("Event: Load");
 
   function updateNetworkStatus() {
     if (navigator.onLine) {
-      document.getElementById("status").innerHTML = "Online!";
+      document.getElementById("status").innerHTML = ONLINE;
     } else {
-      document.getElementById("status").innerHTML = "Offline";
+      document.getElementById("status").innerHTML = OFFLINE;
     }
   }
 
@@ -21,14 +24,13 @@ window.addEventListener("load", () => {
     updateNetworkStatus();
   }, 500);
 
-  window.addEventListener("offline", () => {
-    console.log("Event: Offline");
-    document.getElementById("status").innerHTML = "Offline";
-  });
-
   window.addEventListener("online", () => {
     console.log("Event: Online");
-    document.getElementById("status").innerHTML = "Online!";
+    document.getElementById("status").innerHTML = ONLINE;
+  });
+  window.addEventListener("offline", () => {
+    console.log("Event: Offline");
+    document.getElementById("status").innerHTML = OFFLINE;
   });
 });
 
@@ -81,6 +83,22 @@ class App extends React.Component {
     this.ext = "";
     this.lastModifiedDate;
     this.reader = new FileReader();
+  }
+
+  componentDidMount() {
+    console.log("App Component Mounted!");
+    //Initialize firebase stuff after component is mounted.
+    this.storageRef = firebase.storage().ref();
+    this.database = firebase.firestore();
+    this.imagesRef = this.storageRef.child("images"); //points to /images on firebase
+    this.database
+      .collection("uploadRefs")
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          console.log(`${doc.id} => ${doc.data()}`);
+        });
+      });
   }
 
   onFileChange = event => {
@@ -249,14 +267,6 @@ class App extends React.Component {
       }
     );
   };
-
-  componentDidMount() {
-    console.log("App Component Mounted!");
-    //Initialize firebase stuff after component is mounted.
-    this.storageRef = firebase.storage().ref();
-    this.database = firebase.firestore();
-    this.imagesRef = this.storageRef.child("images"); //points to /images on firebase
-  }
 
   render() {
     return (
