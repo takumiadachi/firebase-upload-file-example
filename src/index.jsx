@@ -7,7 +7,7 @@ import fileType from "file-type";
 import filesize from "filesize";
 
 const ONLINE = `<div style="color:green">PWA Online!</div>`;
-const OFFLINE = `<div style="color:yellow">PWA Offline</div>`;
+const OFFLINE = `<div style="color:GoldenRod">PWA Offline</div>`;
 
 window.addEventListener("load", () => {
   console.log("Event: Load");
@@ -66,7 +66,7 @@ class App extends React.Component {
       progress: 0,
       bytesTransferred: 0,
       size: 0,
-      status: "Ready", //paused or running
+      status: "Ready", // Paused, running, ready, etc
       downloadURL: "",
       errorCode: ""
     };
@@ -96,7 +96,7 @@ class App extends React.Component {
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
-          console.log(`${doc.id} => ${doc.data()}`);
+          console.log(doc);
         });
       });
   }
@@ -110,6 +110,7 @@ class App extends React.Component {
       this.fileInputRef.current.value = "";
       return;
     }
+
     try {
       if (files[0]) {
         // this.reader.readAsDataURL(files[0]);
@@ -225,12 +226,16 @@ class App extends React.Component {
         switch (error.code) {
           case "storage/unauthorized":
             // User doesn't have permission to access the object
+            console.error("Do not have permission to access the object.");
+
             break;
           case "storage/canceled":
             // User canceled the upload
+            console.error("Upload was cancelled.");
             break;
           case "storage/unknown":
             // Unknown error occurred, inspect error.serverResponse
+            console.error("An unknown error occured.");
             break;
         }
       },
@@ -247,6 +252,7 @@ class App extends React.Component {
               status: "Upload Success!"
             });
             console.log("Upload Success!");
+
             // Add to database to display uploaded files to see.
             this.database
               .collection("uploadRefs")
@@ -272,7 +278,7 @@ class App extends React.Component {
     return (
       <div>
         <form onSubmit={this.onFileSubmit.bind(this)}>
-          <h3>Upload File Here</h3>
+          <div style={{ fontSize: "24px" }}>Upload File Here</div>
           <div>
             <input
               type="file"
