@@ -113,8 +113,7 @@ class App extends React.Component {
 
     try {
       if (files[0]) {
-        // this.reader.readAsDataURL(files[0]);
-        this.reader.readAsArrayBuffer(files[0]);
+        this.reader.readAsArrayBuffer(files[0]); // Can trigger onload event.
         this.file = files[0];
         this.fileName = files[0].name;
         this.fileSize = files[0].size;
@@ -122,9 +121,9 @@ class App extends React.Component {
         this.setState({
           size: files[0].size
         });
-        this.reader.onload = e => {
-          console.log(e);
-          this.fileData = e.target.result;
+        // when content read with readAsArrayBuffer, readAsBinaryString, readAsDataURL or readAsText is available. Can trigger FileReader.onload.
+        this.reader.onload = event => {
+          this.fileData = event.target.result;
           let mimeSignature = fileType(new Uint8Array(e.target.result));
           this.fileMime = mimeSignature.mime;
           this.ext = mimeSignature.ext;
@@ -133,7 +132,7 @@ class App extends React.Component {
             !(this.fileMime === "image/jpeg" || this.fileMime === "image/png")
           ) {
             alert(`File must be jpeg or png.`);
-            this.fileInputRef.current.value = "";
+            this.fileInputRef.current.value = ""; // Clears <input type="file" />
             return;
           }
         };
@@ -326,3 +325,5 @@ class App extends React.Component {
 }
 
 ReactDOM.render(<App />, document.getElementById("app"));
+
+export default App;
