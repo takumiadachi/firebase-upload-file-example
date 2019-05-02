@@ -124,7 +124,7 @@ class App extends React.Component {
         // when content read with readAsArrayBuffer, readAsBinaryString, readAsDataURL or readAsText is available. Can trigger FileReader.onload.
         this.reader.onload = event => {
           this.fileData = event.target.result;
-          let mimeSignature = fileType(new Uint8Array(e.target.result));
+          let mimeSignature = fileType(new Uint8Array(event.target.result));
           this.fileMime = mimeSignature.mime;
           this.ext = mimeSignature.ext;
           // Check if file is the correct mimeType
@@ -245,9 +245,7 @@ class App extends React.Component {
             console.log(this);
             console.log("File available at", downloadURL);
             this.setState({
-              downloadURL: downloadURL
-            });
-            this.setState({
+              downloadURL: downloadURL,
               status: "Upload Success!"
             });
             console.log("Upload Success!");
@@ -255,14 +253,18 @@ class App extends React.Component {
             // Add to database to display uploaded files to see.
             this.database
               .collection("uploadRefs")
-              .add({
-                fileName: this.fileName,
-                url: downloadURL,
-                type: this.fileType,
-                size: this.fileSize
-              })
+              .doc(this.fileName)
+              .set(
+                {
+                  fileName: this.fileName,
+                  url: downloadURL,
+                  type: this.fileType,
+                  size: this.fileSize
+                },
+                { merge: true }
+              )
               .then(docRef => {
-                console.log("Document written with ID: ", docRef.id);
+                console.log("Document written with ID: ", this.fileName);
               })
               .catch(error => {
                 console.error("Error adding document: ", error);
