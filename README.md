@@ -1,6 +1,9 @@
 ## Install
 
-Change firebase environment variables in .env, then...
+```
+rename the [.env.example] to [.env]
+Change firebase environment variables in [.env]
+```
 
 ```
 npm install
